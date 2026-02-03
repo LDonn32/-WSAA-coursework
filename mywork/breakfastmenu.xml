@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<breakfast_menu>
+    <food>
+        <name>Breakfast Bap</name>
+        <price>8.99</price>
+        <description>A breakfast bap with eggs, bacon, white pudding and sausage.</description> <calories>950</calories>
+    </food>
+    <food>
+        <name>French Toast</name>
+        <price>5.99</price>
+        <description>Thick slices made from our homemade sourdough bread.</description>
+        <calories>600</calories>
+    </food>
+    </breakfast_menu>
+      
+        
+
+
+
+     
