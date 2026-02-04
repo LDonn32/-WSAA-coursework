@@ -1,6 +1,6 @@
 from xml.dom.minidom import parse
 
-filename = "employees.xml"
+filename = "mywork/week01/employees.xml"
 
 # read file in two ways
 doc = parse(filename)
