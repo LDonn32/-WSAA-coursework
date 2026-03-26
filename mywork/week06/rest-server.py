@@ -2,7 +2,7 @@
 # author: Andrew Beatty
 
 from flask import Flask, request, jsonify, abort
-from bookDAO-skeleton import bookDAO
+from bookDAOskeleton import bookDAO
 
 app = Flask(__name__)
 
