@@ -96,6 +96,17 @@ class TeacherDAO:
             for i, col in enumerate(row):
                 teacher[keys[i]] = col
         return teacher
+    
+
+def update(self, id, teacher):
+    cursor = self.db.cursor()
+    sql = "UPDATE teacher SET name = ?, class_name = ? WHERE id = ?"
+    values = [teacher['name'], teacher['class_name'], id]
+    cursor.execute(sql, values)
+    self.db.commit()
+    return self.findByID(id)
+
+
 
 
 teacherDAO = TeacherDAO()

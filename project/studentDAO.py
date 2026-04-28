@@ -86,4 +86,22 @@ class StudentDAO:
         return student
 
 
+def update(self, id, student):
+    cursor = self.db.cursor()
+    sql = """UPDATE student 
+             SET name = ?, class_name = ?, teacher_id = ?, qualification_level = ?
+             WHERE id = ?"""
+    values = [
+        student['name'],
+        student['class_name'],
+        student['teacher_id'],
+        student['qualification_level'],
+        id
+    ]
+    cursor.execute(sql, values)
+    self.db.commit()
+    return self.findByID(id)
+
+
+
 studentDAO = StudentDAO()
