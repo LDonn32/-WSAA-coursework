@@ -44,6 +44,33 @@ function deleteTeacher(id) {
         .then(() => loadTeachers());
 }
 
+
+let editingTeacherId = null;
+
+function editTeacher(id, name, className) {
+    editingTeacherId = id;
+    document.getElementById("editTName").value = name;
+    document.getElementById("editTClass").value = className;
+}
+
+function saveTeacher() {
+    let teacher = {
+        name: document.getElementById("editTName").value,
+        class_name: document.getElementById("editTClass").value
+    };
+
+    fetch(`/teachers/${editingTeacherId}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(teacher)
+    })
+    .then(res => res.json())
+    .then(() => loadTeachers());
+}
+
+
+
+
 // ----------------------
 // STUDENTS
 // ----------------------
@@ -92,4 +119,32 @@ function addStudent() {
 function deleteStudent(id) {
     fetch(`/students/${id}`, { method: "DELETE" })
         .then(() => loadStudents());
+}
+
+
+let editingStudentId = null;
+
+function editStudent(id, name, className, teacherId, qual) {
+    editingStudentId = id;
+    document.getElementById("editSName").value = name;
+    document.getElementById("editSClass").value = className;
+    document.getElementById("editSTeacher").value = teacherId;
+    document.getElementById("editSQual").value = qual;
+}
+
+function saveStudent() {
+    let student = {
+        name: document.getElementById("editSName").value,
+        class_name: document.getElementById("editSClass").value,
+        teacher_id: parseInt(document.getElementById("editSTeacher").value),
+        qualification_level: document.getElementById("editSQual").value
+    };
+
+    fetch(`/students/${editingStudentId}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(student)
+    })
+    .then(res => res.json())
+    .then(() => loadStudents());
 }
