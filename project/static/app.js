@@ -16,7 +16,8 @@ function loadTeachers() {
                         <td>${t.name}</td>
                         <td>${t.class_name}</td>
                         <td>
-                            <button onclick="deleteTeacher(${t.id})">Delete</button>
+                            <button class="btn btn-warning btn-sm" onclick="editTeacher(${t.id}, '${t.name}', '${t.class_name}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTeacher(${t.id})">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -44,7 +45,6 @@ function deleteTeacher(id) {
         .then(() => loadTeachers());
 }
 
-
 let editingTeacherId = null;
 
 function editTeacher(id, name, className) {
@@ -70,7 +70,6 @@ function saveTeacher() {
 
 
 
-
 // ----------------------
 // STUDENTS
 // ----------------------
@@ -91,7 +90,8 @@ function loadStudents() {
                         <td>${s.teacher_id}</td>
                         <td>${s.qualification_level}</td>
                         <td>
-                            <button onclick="deleteStudent(${s.id})">Delete</button>
+                            <button class="btn btn-warning btn-sm" onclick="editStudent(${s.id}, '${s.name}', '${s.class_name}', ${s.teacher_id}, '${s.qualification_level}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -120,7 +120,6 @@ function deleteStudent(id) {
     fetch(`/students/${id}`, { method: "DELETE" })
         .then(() => loadStudents());
 }
-
 
 let editingStudentId = null;
 
