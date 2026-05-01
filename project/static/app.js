@@ -1,79 +1,6 @@
-// ----------------------
-// TEACHERS
-// ----------------------
+let editingId = null;
 
-function loadTeachers() {
-    fetch("/teachers")
-        .then(res => res.json())
-        .then(data => {
-            let table = document.querySelector("#teacherTable tbody");
-            table.innerHTML = "";
-
-            data.forEach(t => {
-                table.innerHTML += `
-                    <tr>
-                        <td>${t.id}</td>
-                        <td>${t.name}</td>
-                        <td>${t.class_name}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editTeacher(${t.id}, '${t.name}', '${t.class_name}')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteTeacher(${t.id})">Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        });
-}
-
-function addTeacher() {
-    let teacher = {
-        name: document.getElementById("tName").value,
-        class_name: document.getElementById("tClass").value
-    };
-
-    fetch("/teachers", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(teacher)
-    })
-    .then(res => res.json())
-    .then(() => loadTeachers());
-}
-
-function deleteTeacher(id) {
-    fetch(`/teachers/${id}`, { method: "DELETE" })
-        .then(() => loadTeachers());
-}
-
-let editingTeacherId = null;
-
-function editTeacher(id, name, className) {
-    editingTeacherId = id;
-    document.getElementById("editTName").value = name;
-    document.getElementById("editTClass").value = className;
-}
-
-function saveTeacher() {
-    let teacher = {
-        name: document.getElementById("editTName").value,
-        class_name: document.getElementById("editTClass").value
-    };
-
-    fetch(`/teachers/${editingTeacherId}`, {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(teacher)
-    })
-    .then(res => res.json())
-    .then(() => loadTeachers());
-}
-
-
-
-// ----------------------
-// STUDENTS
-// ----------------------
-
+// LOAD
 function loadStudents() {
     fetch("/students")
         .then(res => res.json())
@@ -86,12 +13,12 @@ function loadStudents() {
                     <tr>
                         <td>${s.id}</td>
                         <td>${s.name}</td>
-                        <td>${s.class_name}</td>
-                        <td>${s.teacher_id}</td>
-                        <td>${s.qualification_level}</td>
+                        <td>${s.address}</td>
+                        <td>${s.email}</td>
+                        <td>${s.course}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" onclick="editStudent(${s.id}, '${s.name}', '${s.class_name}', ${s.teacher_id}, '${s.qualification_level}')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">Delete</button>
+                            <button onclick="editStudent(${s.id}, '${s.name}', '${s.address}', '${s.email}', '${s.course}')">Edit</button>
+                            <button onclick="deleteStudent(${s.id})">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -99,51 +26,49 @@ function loadStudents() {
         });
 }
 
+// CREATE
 function addStudent() {
     let student = {
-        name: document.getElementById("sName").value,
-        class_name: document.getElementById("sClass").value,
-        teacher_id: parseInt(document.getElementById("sTeacher").value),
-        qualification_level: document.getElementById("sQual").value
+        name: document.getElementById("name").value,
+        address: document.getElementById("address").value,
+        email: document.getElementById("email").value,
+        course: document.getElementById("course").value
     };
 
     fetch("/students", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(student)
-    })
-    .then(res => res.json())
-    .then(() => loadStudents());
+    }).then(() => loadStudents());
 }
 
+// DELETE
 function deleteStudent(id) {
     fetch(`/students/${id}`, { method: "DELETE" })
         .then(() => loadStudents());
 }
 
-let editingStudentId = null;
-
-function editStudent(id, name, className, teacherId, qual) {
-    editingStudentId = id;
-    document.getElementById("editSName").value = name;
-    document.getElementById("editSClass").value = className;
-    document.getElementById("editSTeacher").value = teacherId;
-    document.getElementById("editSQual").value = qual;
+// EDIT (load into form)
+function editStudent(id, name, address, email, course) {
+    editingId = id;
+    document.getElementById("editName").value = name;
+    document.getElementById("editAddress").value = address;
+    document.getElementById("editEmail").value = email;
+    document.getElementById("editCourse").value = course;
 }
 
+// UPDATE
 function saveStudent() {
     let student = {
-        name: document.getElementById("editSName").value,
-        class_name: document.getElementById("editSClass").value,
-        teacher_id: parseInt(document.getElementById("editSTeacher").value),
-        qualification_level: document.getElementById("editSQual").value
+        name: document.getElementById("editName").value,
+        address: document.getElementById("editAddress").value,
+        email: document.getElementById("editEmail").value,
+        course: document.getElementById("editCourse").value
     };
 
-    fetch(`/students/${editingStudentId}`, {
+    fetch(`/students/${editingId}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(student)
-    })
-    .then(res => res.json())
-    .then(() => loadStudents());
+    }).then(() => loadStudents());
 }
