@@ -1,66 +1,32 @@
 from flask import Flask, request, jsonify
-import sqlite3
+from studentDAO import studentDAO
 
-app = Flask(__name__, static_url_path='', static_folder='static')
+app = Flask(__name__)
 
-def get_db():
-    conn = sqlite3.connect("students.db")
-    conn.row_factory = sqlite3.Row
-    return conn
+@app.route('/students')
+def getAll():
+    return jsonify(studentDAO.getAll())
 
-# -----------------------
-# GET ALL STUDENTS
-# -----------------------
-@app.route("/students", methods=["GET"])
-def get_students():
-    db = get_db()
-    rows = db.execute("SELECT * FROM students").fetchall()
-    return jsonify([dict(row) for row in rows])
+@app.route('/students/<int:id>')
+def findById(id):
+    return jsonify(studentDAO.findById(id))
 
-# -----------------------
-# CREATE STUDENT
-# -----------------------
-@app.route("/students", methods=["POST"])
-def add_student():
-    data = request.json
-    db = get_db()
-    db.execute(
-        "INSERT INTO students (name, address, email, course) VALUES (?, ?, ?, ?)",
-        (data["name"], data["address"], data["email"], data["course"])
-    )
-    db.commit()
-    return jsonify({"status": "created"})
+@app.route('/students', methods=['POST'])
+def create():
+    student = request.json
+    new_id = studentDAO.create(student)
+    return jsonify({"id": new_id})
 
-# -----------------------
-# UPDATE STUDENT
-# -----------------------
-@app.route("/students/<int:id>", methods=["PUT"])
-def update_student(id):
-    data = request.json
-    db = get_db()
-    db.execute(
-        "UPDATE students SET name=?, address=?, email=?, course=? WHERE id=?",
-        (data["name"], data["address"], data["email"], data["course"], id)
-    )
-    db.commit()
-    return jsonify({"status": "updated"})
+@app.route('/students/<int:id>', methods=['PUT'])
+def update(id):
+    student = request.json
+    result = studentDAO.update(id, student)
+    return jsonify({"updated": result})
 
-# -----------------------
-# DELETE STUDENT
-# -----------------------
-@app.route("/students/<int:id>", methods=["DELETE"])
-def delete_student(id):
-    db = get_db()
-    db.execute("DELETE FROM students WHERE id=?", (id,))
-    db.commit()
-    return jsonify({"status": "deleted"})
-
-# -----------------------
-# SERVE FRONTEND
-# -----------------------
-@app.route("/")
-def home():
-    return app.send_static_file("index.html")
+@app.route('/students/<int:id>', methods=['DELETE'])
+def delete(id):
+    result = studentDAO.delete(id)
+    return jsonify({"deleted": result})
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

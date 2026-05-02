@@ -1,12 +1,18 @@
 import sqlite3
-import dbconfig as cfg
-database = cfg.mysql["database"]
 
-con = sqlite3.connect(database)
-cur = con.cursor()
-with open("schema.sql", "r") as fp:
-    sql = fp.read()
+conn = sqlite3.connect("students.db")
+cursor = conn.cursor()
 
-cur.executescript(sql)
-con.close()
-print("sanity")
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS student (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    firstname TEXT,
+    lastname TEXT,
+    age INTEGER
+)
+""")
+
+conn.commit()
+conn.close()
+
+print("SQLite schema created.")
