@@ -1,64 +1,73 @@
 import sqlite3
-from dbconfig import get_connection
+from dbconfig import get_db_path
 
-class StudentDAO:
+def get_connection():
+    conn = sqlite3.connect(get_db_path())
+    conn.row_factory = sqlite3.Row  # Enables dict-like access
+    return conn
 
-    def getAll(self):
-        conn = get_connection()
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM student")
-        rows = cursor.fetchall()
-        conn.close()
-        return [dict(row) for row in rows]
+def get_all_students():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students")
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
 
-    def findById(self, id):
-        conn = get_connection()
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM student WHERE id=?", (id,))
-        row = cursor.fetchone()
-        conn.close()
-        return dict(row) if row else None
+def get_student_by_id(student_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students WHERE id = ?", (student_id,))
+    row = cursor.fetchone()
+    conn.close()
 
-    def create(self, student):
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO student (firstname, lastname, age) VALUES (?, ?, ?)",
-            (student["firstname"], student["lastname"], student["age"])
-        )
-        conn.commit()
-        new_id = cursor.lastrowid
-        conn.close()
-        return new_id
+    return dict(row) if row else None
+def create_student(student):
+    conn = get_connection()
+    cur = conn.cursor()
 
-    def update(self, id, student):
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE student SET firstname=?, lastname=?, age=? WHERE id=?",
-            (student["firstname"], student["lastname"], student["age"], id)
-        )
-        conn.commit()
-        conn.close()
-        return cursor.rowcount
+    # find the smallest missing id
+    cur.execute("SELECT id FROM students ORDER BY id")
+    existing_ids = [row["id"] for row in cur.fetchall()]
 
-    def delete(self, id):
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM student WHERE id=?", (id,))
-        conn.commit()
-        conn.close()
-        return cursor.rowcount
+    new_id = 1
+    for i in existing_ids:
+        if i == new_id:
+            new_id += 1
+        else:
+            break
 
-studentDAO = StudentDAO()
+    cur.execute("""
+        INSERT INTO students (id, name, address, email, course)
+        VALUES (?, ?, ?, ?, ?)
+    """, (new_id, student['name'], student['address'], student['email'], student['course']))
+
+    conn.commit()
+    conn.close()
+    return new_id
 
 
+def update_student(student_id, student):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE students
+        SET name = ?, address = ?, email = ?, course = ?
+        WHERE id = ?
+    ''', (student['name'], student['address'], student['email'], student['course'], student_id))
+    conn.commit()
+    rows_affected = cursor.rowcount
+    conn.close()
+    return rows_affected > 0
 
-
-
-
+def delete_student(student_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM students WHERE id = ?", (student_id,))
+    conn.commit()
+    rows_affected = cursor.rowcount
+    conn.close()
+    return rows_affected > 0
 
 
 
