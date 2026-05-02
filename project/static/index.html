@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student CRUD</title>
+    <meta charset="utf-8">
+    <title>Student Details Manager</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>Student Manager</h1>
 
-<h1>Student Manager</h1>
+    <button onclick="loadStudents()">Load Students</button>
 
-<button onclick="loadStudents()">Load Students</button>
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>ID</th><th>Name</th><th>Address</th><th>Email</th><th>Course</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-<table id="studentTable">
-    <thead>
-        <tr>
-            <th>ID</th><th>Name</th><th>Address</th><th>Email</th><th>Course</th><th>Actions</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <h3>Add Student</h3>
+    <input id="name" placeholder="Name">
+    <input id="address" placeholder="Address">
+    <input id="email" placeholder="Email">
+    <input id="course" placeholder="Course">
+    <button onclick="addStudent()">Add</button>
 
-<h3>Add Student</h3>
-<input id="name" placeholder="Name">
-<input id="address" placeholder="Address">
-<input id="email" placeholder="Email">
-<input id="course" placeholder="Course">
-<button onclick="addStudent()">Add</button>
+    <h3>Edit Student</h3>
+    <input id="editName" placeholder="Name">
+    <input id="editAddress" placeholder="Address">
+    <input id="editEmail" placeholder="Email">
+    <input id="editCourse" placeholder="Course">
+    <button onclick="saveStudent()">Save</button>
 
-<h3>Edit Student</h3>
-<input id="editName" placeholder="Name">
-<input id="editAddress" placeholder="Address">
-<input id="editEmail" placeholder="Email">
-<input id="editCourse" placeholder="Course">
-<button onclick="saveStudent()">Save</button>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

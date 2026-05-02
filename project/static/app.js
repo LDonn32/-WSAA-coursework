@@ -1,13 +1,11 @@
 let editingId = null;
 
-// LOAD
 function loadStudents() {
     fetch("/students")
         .then(res => res.json())
         .then(data => {
             let table = document.querySelector("#studentTable tbody");
             table.innerHTML = "";
-
             data.forEach(s => {
                 table.innerHTML += `
                     <tr>
@@ -17,7 +15,7 @@ function loadStudents() {
                         <td>${s.email}</td>
                         <td>${s.course}</td>
                         <td>
-                            <button onclick="editStudent(${s.id}, '${s.name}', '${s.address}', '${s.email}', '${s.course}')">Edit</button>
+                            <button onclick="editStudent(${s.id}, '${escapeJs(s.name)}', '${escapeJs(s.address)}', '${escapeJs(s.email)}', '${escapeJs(s.course)}')">Edit</button>
                             <button onclick="deleteStudent(${s.id})">Delete</button>
                         </td>
                     </tr>
@@ -26,7 +24,6 @@ function loadStudents() {
         });
 }
 
-// CREATE
 function addStudent() {
     let student = {
         name: document.getElementById("name").value,
@@ -39,16 +36,17 @@ function addStudent() {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(student)
-    }).then(() => loadStudents());
+    }).then(() => {
+        clearAddForm();
+        loadStudents();
+    });
 }
 
-// DELETE
 function deleteStudent(id) {
     fetch(`/students/${id}`, { method: "DELETE" })
         .then(() => loadStudents());
 }
 
-// EDIT (load into form)
 function editStudent(id, name, address, email, course) {
     editingId = id;
     document.getElementById("editName").value = name;
@@ -57,8 +55,8 @@ function editStudent(id, name, address, email, course) {
     document.getElementById("editCourse").value = course;
 }
 
-// UPDATE
 function saveStudent() {
+    if (!editingId) return alert("Select a student to edit first.");
     let student = {
         name: document.getElementById("editName").value,
         address: document.getElementById("editAddress").value,
@@ -70,5 +68,29 @@ function saveStudent() {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(student)
-    }).then(() => loadStudents());
+    }).then(() => {
+        editingId = null;
+        clearEditForm();
+        loadStudents();
+    });
+}
+
+function clearAddForm() {
+    document.getElementById("name").value = "";
+    document.getElementById("address").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("course").value = "";
+}
+
+function clearEditForm() {
+    document.getElementById("editName").value = "";
+    document.getElementById("editAddress").value = "";
+    document.getElementById("editEmail").value = "";
+    document.getElementById("editCourse").value = "";
+}
+
+/* small helper to escape single quotes when injecting into onclick strings */
+function escapeJs(s) {
+    if (!s) return '';
+    return s.replace(/'/g, "\\'");
 }
